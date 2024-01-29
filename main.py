@@ -1,5 +1,4 @@
 from flask import Flask, request 
-# from twilio.twiml.messaging_response import MessagingResponse 
 from twilio.rest import Client
 import string
 import random
@@ -8,13 +7,11 @@ import base64
 import json 
 import os 
 import img2pdf
-import pywhatkit as kit
-from datetime import datetime
 import pathlib
 
 #main code
 account_sid = "AC9b7bb02cd00bc2b3df582f86ce864fe1"
-auth_token = "64d84a3e0ec8201cb7807f31ec8fa413"
+auth_token = "b7bcb6fe3b9716867029aa507f85aa97"
 data_path = os.path.join("data.json")
 twilio_phone_number = "whatsapp:+14155238886"
 
@@ -104,49 +101,20 @@ def SendMessage(message,to_number):
         to=to_number
     )
 
-# def SendPdf(message,to_number,pdf_path):
-#     client = Client(account_sid, auth_token)        
-#     with open(pdf_path, "rb") as file: 
-#         # Send the message using Twilio
-#         message = client.messages.create(
-#             body=message,
-#             from_=twilio_phone_number,
-#             to=to_number,
-#             media_url=[f'https://{pdf_path}']
-#         )
-#         # Upload PDF file and get its SID
-#         # media = client.messages.create(
-#         #     media_url=[f"data:application/pdf;base64,{base64.b64encode(open(pdf_path, 'rb').read()).decode()}"],
-#         #     from_=f"whatsapp:{twilio_phone_number}",
-#         #     to=f"whatsapp:{to_number}"
-#         # )
-#         # pdf_media_sid = media.sid
-
-#         # # Send a message referencing the uploaded PDF media SID
-#         # message = client.messages.create(
-#         #     body="Check out this PDF!",
-#         #     from_=f"whatsapp:{twilio_phone_number}",
-#         #     to=f"whatsapp:{to_number}",
-#         #     media_url=[pdf_media_sid]
-#         # )
-#     # date = (str(datetime.now()).split(" ")[1]).split(":")
-#     # kit.sendwhatmsg(to_number.split(":")[1], message,date[0],date[1],pdf_path)
 
 def SendPdf(message, to_number, pdf_path):
     client = Client(account_sid, auth_token)
-    with open(pdf_path, "rb") as file:
-        #file:///home/subhradip/Desktop/Codes/Pythons/Pdf_Builder/webver/out_919874210728.pdf
-        # path_prefix = "file:///home/subhradip/Desktop/Codes/Pythons/Pdf_Builder/webver/"
-        absolute_path_prefix = "/home/subhradip/Desktop/Codes/Pythons/Pdf_Builder/webver/"
-        path = pathlib.Path(absolute_path_prefix+pdf_path).as_uri()
-        print(path)
-        # Send the message using Twilio
-        message = client.messages.create(
-            body=message,
-            from_=twilio_phone_number,
-            to=to_number,
-            media_url=["https://drive.google.com/file/d/1w-aQ94xgYTji7H94ckEPpcreIxVJXub2/view"]  # Remove 'https://'
-        )
+    absolute_path_prefix = "/home/subhradip/Desktop/Codes/Pythons/Pdf_Builder/webver/"
+    path = pathlib.Path(absolute_path_prefix+pdf_path).as_uri()
+    print(to_number)
+    # Send the message using Twilio
+    msg_send = client.messages.create(
+        body=message,
+        from_=twilio_phone_number,
+        to=to_number,
+        media_url=["https://github.com/subhradip32/Whatsapp_pdf_bot/raw/main/out_919874210728.pdf"]  # Remove 'https://'
+    )
+
 
 
 
@@ -176,8 +144,7 @@ def wa_reply():
         print(output_path)
         convert_images_to_pdf(image_paths=paths,output_pdf_path=output_path)
         # SendPdf("Here is your Pdf Enjoy :)",from_who,output_path)
-        SendPdf("Invoice attached.", from_who, output_path)
-        print("Pdf")
+        SendPdf("Here is your pdf.", from_who, output_path)
     return str("Not found")
 
 if __name__ == '__main__':
