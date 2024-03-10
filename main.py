@@ -54,12 +54,29 @@ def Read_ent(datafile_path,from_who):
                 break
     return img_paths   
 
+# def Read_ent(datafile_path, from_who):
+#     img_paths = []
+#     with open(datafile_path, "r") as file:
+#         data = json.load(file)
+#         for each in data["Data"]:
+#             if each["phone_id"] == from_who:
+#                 img_paths = [os.path.join(os.getcwd(), img) for img in each["images"]]  # Get absolute file paths
+#                 break
+#     return img_paths
+
+
 #converting pdf
 def convert_images_to_pdf(image_paths, output_pdf_path):
     a4inpt = (img2pdf.mm_to_pt(210),img2pdf.mm_to_pt(297))
     layout_fun = img2pdf.get_layout_fun(a4inpt)
-    with open(output_pdf_path,"wb") as file: 
+    with open(output_pdf_path,"w") as file: 
         file.write(img2pdf.convert(image_paths ,  layout_fun=layout_fun))
+# def convert_images_to_pdf(image_paths, output_pdf_path):
+#     a4inpt = (img2pdf.mm_to_pt(210), img2pdf.mm_to_pt(297))
+#     layout_fun = img2pdf.get_layout_fun(a4inpt)
+#     with open(output_pdf_path, "wb") as file:  # Open in binary mode
+#         file.write(img2pdf.convert([open(img_path, 'rb') for img_path in image_paths], layout_fun=layout_fun))
+
 
 def id_generator(size = 10, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
@@ -106,13 +123,13 @@ def SendPdf(message, to_number, pdf_path):
     client = Client(account_sid, auth_token)
     absolute_path_prefix = "/home/subhradip/Desktop/Codes/Pythons/Pdf_Builder/webver/"
     path = pathlib.Path(absolute_path_prefix+pdf_path).as_uri()
-    print(to_number)
+    print(path)
     # Send the message using Twilio
     msg_send = client.messages.create(
         body=message,
         from_=twilio_phone_number,
         to=to_number,
-        media_url=["https://github.com/subhradip32/Whatsapp_pdf_bot/raw/main/out_919874210728.pdf"]  # Remove 'https://'
+        media_url=[path]  # Remove 'https://'
     )
 
 
@@ -134,7 +151,10 @@ def wa_reply():
         else:
             SendMessage("File not readable\nPlease try to change the image and try again",from_who) 
             return str("Not found")
-        
+    
+    #Add another section for deleteing the previous images 
+    # Add section for help for listing all the commands 
+
     #checking if msg 
     elif body == ". pdf":
         #SendMessage("Genrating Pdf",from_who)
